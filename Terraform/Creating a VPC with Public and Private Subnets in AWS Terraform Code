@@ -1,0 +1,56 @@
+provider "aws" {
+    region = "ap-southeast-1"  
+}
+resource "aws_vpc" "vpc_demo" {
+    tags = {
+      Name = "satthya_vpc"
+    }
+    cidr_block = "10.0.0.0/24"    
+}
+resource "aws_subnet" "sub_pub" {
+  vpc_id = aws_vpc.vpc_demo.id
+  tags = {
+    Name = "satthya_sub_pub"
+  }
+  availability_zone = "ap-southeast-1a"
+  cidr_block = "10.0.0.0/25"
+}
+resource "aws_subnet" "sub_pri" {
+    vpc_id = aws_vpc.vpc_demo.id
+    tags = {
+      Name = "satthya_sub_pri"
+    }
+    availability_zone = "ap-southeast-1b"
+    cidr_block = "10.0.0.128/26"  
+}
+resource "aws_route_table" "rt_pub" {
+  vpc_id = aws_vpc.vpc_demo.id
+  tags = {
+    Name = "satthya_route_pub"
+  }  
+}
+resource "aws_route_table" "rt_pri" {
+  vpc_id = aws_vpc.vpc_demo.id
+  tags = {
+    Name = "satthya_route_pri"
+  }  
+}
+resource "aws_route_table_association" "rta_pub" {
+    subnet_id = aws_subnet.sub_pub.id
+    route_table_id = aws_route_table.rt_pub.id  
+}
+resource "aws_route_table_association" "rta_pri" {
+   subnet_id = aws_subnet.sub_pri.id
+   route_table_id = aws_route_table.rt_pri.id  
+}
+
+resource "aws_route" "internet_access" {
+  route_table_id = aws_route_table.rt_pub.id
+  destination_cidr_block = "0.0.0.0/0"
+  gateway_id = aws_internet_gateway.igw.id
+  
+}
+
+resource "aws_internet_gateway" "igw" {
+  vpc_id = aws_vpc.vpc_demo.id  
+}
