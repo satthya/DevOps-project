@@ -1,0 +1,29 @@
+
+### Prometheus service file###
+
+[unit]
+Description= Prometheus Monitoring Tool for Grafana
+Wants=network-online.target
+After=network-online.target
+[Service]
+User=root
+Group=root
+Type=simple
+ExecStart=/usr/local/bin/prometheus \
+    --config.file=/etc/prometheus/prometheus.yml \
+    --storage.tsdb.path=/var/lib/prometheus/ \
+    --web.console.templates=/usr/local/bin/consoles \
+    --web.console.libraries=/usr/local/bin/consoles_libraries
+[Install]
+WantedBy=multi-user.target
+
+## Service file for node_exported ##
+
+[Unit]
+Description=Node Exporter
+After=network.target
+[Service]
+User=root
+ExecStart=/usr/local/bin/node_exporter
+[Install]
+WantedBy=default.target
