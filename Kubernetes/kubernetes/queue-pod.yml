@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: queue
+  labels:
+    app: queue
+    release: "1"
+spec:
+  containers:
+  - name: queue-fleetman
+    image: richardchesterwood/k8s-fleetman-queue:release1
